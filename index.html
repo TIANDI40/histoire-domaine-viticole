@@ -1,0 +1,178 @@
+import React, { useState } from 'react';
+import { Wine, MapPin, Users, Grape } from 'lucide-react';
+
+const InteractiveStory = () => {
+  const [currentScene, setCurrentScene] = useState('start');
+  const [playerName, setPlayerName] = useState('');
+  const [discoveries, setDiscoveries] = useState([]);
+
+  const addDiscovery = (discovery) => {
+    setDiscoveries(prev => [...prev, discovery]);
+  };
+
+  const scenes = {
+    start: {
+      title: "Bienvenue au Domaine des Coteaux de Loire",
+      content: "Vous arrivez dans un magnifique domaine viticole au cœur de la vallée de la Loire. Les vignes s'étendent à perte de vue, et l'air embaume le raisin mûr. Un panneau indique : 'Domaine familial - Spécialité Chenin depuis 1892'.",
+      image: "🍇",
+      choices: [
+        { text: "Entrer par la cave", action: () => setCurrentScene('cave') },
+        { text: "Aller voir les vignes", action: () => setCurrentScene('vignes') },
+        { text: "Se présenter à l'accueil", action: () => setCurrentScene('accueil') }
+      ]
+    },
+    
+    accueil: {
+      title: "Rencontre avec Marie, la vigneronne",
+      content: "Marie, la propriétaire du domaine, vous accueille avec un sourire chaleureux. 'Bonjour ! Je suis Marie, troisième génération à travailler ce terroir. Le chenin, c'est ma passion ! Il exprime ici toute la minéralité de nos sols de tuffeau.'",
+      image: "👩‍🌾",
+      choices: [
+        { text: "Demander l'histoire du domaine", action: () => { addDiscovery("Histoire familiale"); setCurrentScene('histoire'); }},
+        { text: "Découvrir le chenin", action: () => { addDiscovery("Cépage chenin"); setCurrentScene('chenin'); }},
+        { text: "Visiter les installations", action: () => setCurrentScene('cave') }
+      ]
+    },
+
+    vignes: {
+      title: "Dans les vignes avec Pierre, le chef de culture",
+      content: "Pierre, un homme passionné aux mains tachées de terre, vous explique : 'Regardez ces feuilles ! Le chenin aime notre climat frais. Ici, on vendange tard pour avoir cette belle acidité qui fait la réputation de nos vins.'",
+      image: "🍃",
+      choices: [
+        { text: "Apprendre sur le terroir", action: () => { addDiscovery("Terroir de tuffeau"); setCurrentScene('terroir'); }},
+        { text: "Comprendre la vendange", action: () => { addDiscovery("Vendange tardive"); setCurrentScene('vendange'); }},
+        { text: "Retourner au domaine", action: () => setCurrentScene('accueil') }
+      ]
+    },
+
+    cave: {
+      title: "Les chais avec Thomas, le maître de chai",
+      content: "Thomas, jeune œnologue passionné, vous guide dans les chais. 'Le chenin, c'est un cépage noble mais capricieux. Regardez ces cuves : on vinifie en douceur pour préserver ses arômes de fruits blancs et cette minéralité si particulière.'",
+      image: "🍷",
+      choices: [
+        { text: "Découvrir la vinification", action: () => { addDiscovery("Vinification douce"); setCurrentScene('vinification'); }},
+        { text: "Déguster le vin", action: () => setCurrentScene('degustation') },
+        { text: "Voir les barriques", action: () => { addDiscovery("Élevage en fûts"); setCurrentScene('elevage'); }}
+      ]
+    },
+
+    degustation: {
+      title: "Dégustation finale",
+      content: `Félicitations ! Vous avez découvert ${discoveries.length} secrets du domaine. Marie vous propose une dégustation de leur chenin : "Sentez ces arômes de poire et de miel, cette minéralité... C'est tout notre terroir dans ce verre !"`,
+      image: "🥂",
+      choices: [
+        { text: "Recommencer l'aventure", action: () => { setDiscoveries([]); setCurrentScene('start'); }},
+        { text: "Voir mes découvertes", action: () => setCurrentScene('recap') }
+      ]
+    },
+
+    recap: {
+      title: "Vos découvertes",
+      content: "Voici ce que vous avez appris lors de votre visite :",
+      image: "📋",
+      choices: [
+        { text: "Recommencer l'aventure", action: () => { setDiscoveries([]); setCurrentScene('start'); }}
+      ]
+    }
+  };
+
+  // Scènes supplémentaires simplifiées
+  if (!scenes[currentScene]) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 bg-gradient-to-b from-green-50 to-yellow-50 rounded-lg">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-green-800 mb-4">Section en développement</h2>
+          <p className="text-gray-700 mb-6">Cette partie de l'histoire sera développée...</p>
+          <button 
+            onClick={() => setCurrentScene('start')}
+            className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
+          >
+            Retour au début
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const scene = scenes[currentScene];
+
+  return (
+    <div className="max-w-2xl mx-auto p-6 bg-gradient-to-b from-green-50 to-yellow-50 rounded-lg shadow-lg">
+      {/* Header */}
+      <div className="text-center mb-6">
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <Wine className="text-purple-600" size={24} />
+          <h1 className="text-2xl font-bold text-green-800">Domaine des Coteaux de Loire</h1>
+        </div>
+        <div className="flex items-center justify-center gap-4 text-sm text-gray-600">
+          <div className="flex items-center gap-1">
+            <MapPin size={16} />
+            <span>Vallée de la Loire</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Grape size={16} />
+            <span>Chenin Blanc</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Scene */}
+      <div className="bg-white rounded-lg p-6 mb-6 shadow-sm">
+        <div className="text-center mb-4">
+          <div className="text-6xl mb-2">{scene.image}</div>
+          <h2 className="text-xl font-semibold text-gray-800">{scene.title}</h2>
+        </div>
+        
+        <p className="text-gray-700 leading-relaxed mb-6">{scene.content}</p>
+
+        {/* Découvertes pour la page récap */}
+        {currentScene === 'recap' && (
+          <div className="mb-6">
+            <ul className="space-y-2">
+              {discoveries.map((discovery, index) => (
+                <li key={index} className="flex items-center gap-2 text-green-700">
+                  <span className="text-green-500">✓</span>
+                  {discovery}
+                </li>
+              ))}
+            </ul>
+            {discoveries.length === 0 && (
+              <p className="text-gray-500 italic">Aucune découverte pour cette visite.</p>
+            )}
+          </div>
+        )}
+
+        {/* Choices */}
+        <div className="space-y-3">
+          {scene.choices.map((choice, index) => (
+            <button
+              key={index}
+              onClick={choice.action}
+              className="w-full text-left p-3 bg-green-100 hover:bg-green-200 rounded-lg transition-colors duration-200 border border-green-200"
+            >
+              {choice.text}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Progress */}
+      {discoveries.length > 0 && (
+        <div className="bg-white rounded-lg p-4 shadow-sm">
+          <div className="flex items-center gap-2 mb-2">
+            <Users size={16} className="text-green-600" />
+            <span className="text-sm font-medium text-gray-700">Découvertes : {discoveries.length}</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {discoveries.map((discovery, index) => (
+              <span key={index} className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                {discovery}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default InteractiveStory;
